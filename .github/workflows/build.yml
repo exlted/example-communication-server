@@ -25,6 +25,7 @@ jobs:
     uses: ./.github/workflows/build_rust_release.yml
     with:
       path: ./example-communication-client
+      identifier: 'client'
     secrets:
       username: ${{ github.repository_owner }}
       password: ${{ secrets.GITHUB_TOKEN }}
@@ -33,6 +34,7 @@ jobs:
     uses: ./.github/workflows/build_rust_release.yml
     with:
       path: ./example-communication-controller
+      identifier: 'controller'
     secrets:
       username: ${{ github.repository_owner }}
       password: ${{ secrets.GITHUB_TOKEN }}
