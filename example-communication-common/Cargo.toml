@@ -1,6 +1,11 @@
 [package]
 name = "example-communication-common"
 version = "0.1.0"
+authors = ["exlted <exltedofdrg@gmail.com>"]
+license = "MIT"
+description = "Helper library for the Example-Communication Project"
+repository = "https://github.com/exlted/example-communication-server"
+homepage = "https://github.com/exlted/example-communication-server"
 edition = "2024"
 
 [features]
