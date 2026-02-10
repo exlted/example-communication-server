@@ -815,7 +815,7 @@ name = "client"
 version = "0.1.0"
 dependencies = [
  "confy",
- "example-communication-common",
+ "example-communication-common 0.1.0",
  "field_name",
  "lofty",
  "rodio",
@@ -920,7 +920,7 @@ name = "controller"
 version = "0.1.0"
 dependencies = [
  "confy",
- "example-communication-common",
+ "example-communication-common 0.1.0",
  "field_name",
  "serde",
  "slint",
@@ -1511,6 +1511,16 @@ dependencies = [
  "tokio",
  "tokio-stream",
  "tokio-tungstenite 0.28.0",
+]
+
+[[package]]
+name = "example-communication-common"
+version = "0.1.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "5e562fb5f42b316f0edb68b893230d847d59edb9e84ae4ed0947934b03bc67c1"
+dependencies = [
+ "serde",
+ "serde_json",
 ]
 
 [[package]]
@@ -4607,7 +4617,7 @@ dependencies = [
 name = "server"
 version = "0.1.1"
 dependencies = [
- "example-communication-common",
+ "example-communication-common 0.1.0 (registry+https://github.com/rust-lang/crates.io-index)",
  "futures",
  "log",
  "serde_json",
