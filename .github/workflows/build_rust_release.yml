@@ -6,9 +6,6 @@ on:
       path:
         required: true
         type: string
-      identifier:
-        required: true
-        type: string
     secrets:
       username:
         required: true
@@ -125,8 +122,9 @@ jobs:
         id: binary_name
         shell: bash
         run: |
+          cd ${{ inputs.path }}
           BINARY_NAME=$(cargo metadata --no-deps --format-version 1 | jq -r '.packages[0].targets[] | select(.kind[] | contains("bin")) | .name' | head -n 1)
-          echo "name=$BINARY_NAME-${{ inputs.identifier }}" >> $GITHUB_OUTPUT
+          echo "name=$BINARY_NAME" >> $GITHUB_OUTPUT
 
       - name: Package binary
         shell: bash
