@@ -42,7 +42,7 @@ jobs:
       - name: Build the binary
         run: |
           cd ${{ inputs.path }}
-          cargo build  -release -target ${{ matrix.rust_target }}
+          cargo build --release --target ${{ matrix.rust_target }}
           if [[ "${{ matrix.artifact_name }}" == *.exe ]]; then
             mv target/${{ matrix.rust_target }}/release/binary.exe ${{ matrix.artifact_name }}
           else
