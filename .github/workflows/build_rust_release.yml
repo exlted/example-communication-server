@@ -35,6 +35,11 @@ jobs:
           toolchain: stable
           target: ${{ matrix.rust_target }}
 
+      - name: Set up MinGW
+        uses: egor-tensin/setup-mingw@v3
+        with:
+          platform: x64
+
       - name: Build the binary
         run: |
           cd ${{ inputs.path }}
