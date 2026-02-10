@@ -1,0 +1,17 @@
+[package]
+name = "client"
+version = "0.1.0"
+edition = "2024"
+
+[dependencies]
+example-communication-common = {version = "0.1.0", path = "../example-communication-common", features = ["client"]}
+tokio = { version = "1.49.0",  features = ["rt-multi-thread"]}
+slint = "1.14.1"
+lofty = "0.22.4"
+rodio = "0.21.1"
+serde = { version = "1.0.228", features = ["derive"] }
+confy = { version="2.0.0", features =  ["ron_conf"], default-features = false}
+field_name = "0.2.0"
+
+[build-dependencies]
+slint-build = "1.14"

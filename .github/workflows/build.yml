@@ -1,0 +1,38 @@
+name: Entire Project CI/CD
+
+on:
+  push:
+    branches: [ "main" ]
+
+jobs:
+  build-common:
+    uses: ./.github/workflows/publish-crate.yml
+    with:
+      path: ./example-communication-common
+    secrets:
+      cargo: ${{ secrets.CARGO_TOKEN }}
+  build-server:
+    needs: [build-common]
+    uses: ./.github/workflows/publish-docker-images.yml
+    with:
+      path: ./example-communication-server
+      image_name: ghcr.io/exlted/example-communication-server
+    secrets:
+      username: ${{ github.repository_owner }}
+      password: ${{ secrets.REGISTRY_TOKEN }}
+  build-client:
+    needs: [build-common]
+    uses: ./.github/workflows/build_rust_release.yml
+    with:
+      path: ./example-communication-client
+    secrets:
+      username: ${{ github.repository_owner }}
+      password: ${{ secrets.REGISTRY_TOKEN }}
+  build-controller:
+    needs: [build-common]
+    uses: ./.github/workflows/build_rust_release.yml
+    with:
+      path: ./example-communication-controller
+    secrets:
+      username: ${{ github.repository_owner }}
+      password: ${{ secrets.REGISTRY_TOKEN }}

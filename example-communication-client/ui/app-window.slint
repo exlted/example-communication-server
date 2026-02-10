@@ -1,0 +1,38 @@
+import { Button, HorizontalBox, VerticalBox, LineEdit, StandardButton } from "std-widgets.slint";
+import { UIOption, DynamicForm } from "../../example-communication-common/ui/common-components.slint";
+
+export component MessageBox inherits Dialog {
+    in property <string> message: "testing";
+    title: "You Got a Message!";
+    callback message-box-closed;
+    always-on-top: true;
+
+    t := Text {
+        text: "\{root.message}";
+        vertical-alignment: TextVerticalAlignment.center;
+        font-size: 15pt;
+        horizontal-alignment: TextHorizontalAlignment.center;
+    }
+}
+
+export component AppWindow inherits Window {
+    title: "Messaging Client";
+
+    in property <string> connection_state: "Disconnected";
+
+    in-out property <[UIOption]> options: [];
+
+    callback option_edited(option_name: string, new_value: string);
+
+    VerticalBox {
+        DynamicForm {
+            options: root.options;
+            option_edited(index, new_value) => {
+                option_edited(options[index].name, new_value);
+            }
+        }
+        Text {
+            text: "Connection Status: \{root.connection_state}";
+        }
+    }
+}
