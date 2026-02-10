@@ -19,7 +19,7 @@ jobs:
       image_name: ghcr.io/exlted/example-communication-server
     secrets:
       username: ${{ github.repository_owner }}
-      password: ${{ secrets.REGISTRY_TOKEN }}
+      password: ${{ secrets.GITHUB_TOKEN }}
   build-client:
     needs: [build-common]
     uses: ./.github/workflows/build_rust_release.yml
@@ -27,7 +27,7 @@ jobs:
       path: ./example-communication-client
     secrets:
       username: ${{ github.repository_owner }}
-      password: ${{ secrets.REGISTRY_TOKEN }}
+      password: ${{ secrets.GITHUB_TOKEN }}
   build-controller:
     needs: [build-common]
     uses: ./.github/workflows/build_rust_release.yml
@@ -35,4 +35,4 @@ jobs:
       path: ./example-communication-controller
     secrets:
       username: ${{ github.repository_owner }}
-      password: ${{ secrets.REGISTRY_TOKEN }}
+      password: ${{ secrets.GITHUB_TOKEN }}
