@@ -36,11 +36,11 @@ jobs:
           #  use_cross: true
 
           # x86 Linux
-          - name: Linux x86_64
-            os: ubuntu-latest
-            target: x86_64-unknown-linux-gnu
-            binary_ext: ""
-            use_cross: false
+          #- name: Linux x86_64
+          #  os: ubuntu-latest
+          #  target: x86_64-unknown-linux-gnu
+          #  binary_ext: ""
+          #  use_cross: false
 
           # Windows
           - name: Windows x86_64
@@ -49,11 +49,11 @@ jobs:
             binary_ext: ".exe"
             use_cross: false
 
-          - name: Windows ARM64
-            os: windows-latest
-            target: aarch64-pc-windows-msvc
-            binary_ext: ".exe"
-            use_cross: false
+          #- name: Windows ARM64
+          #  os: windows-latest
+          #  target: aarch64-pc-windows-msvc
+          #  binary_ext: ".exe"
+          #  use_cross: false
 
           ## macOS
           #- name: macOS x86_64
