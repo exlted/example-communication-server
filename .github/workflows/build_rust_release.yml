@@ -35,10 +35,6 @@ jobs:
           toolchain: stable
           target: ${{ matrix.rust_target }}
 
-      - name: Install mingw for Windows cross-compilation
-        if: matrix.rust_target == 'x86_64-pc-windows-gnu'
-        run: sudo apt-get install -y gcc-mingw-w64-x86–64
-
       - name: Build the binary
         run: |
           cd ${{ inputs.path }}
