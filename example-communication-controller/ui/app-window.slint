@@ -1,0 +1,81 @@
+import { Button, HorizontalBox, VerticalBox, LineEdit, StandardButton, TabWidget, ScrollView } from "std-widgets.slint";
+import { LabeledLineEdit, UIOption, DynamicForm } from "../../example-communication-common/ui/common-components.slint";
+
+export struct ClientCapability {
+    name: string,
+    display_name: string,
+    options: [UIOption]
+}
+
+export struct ClientConnection {
+    name: string,
+    display_name: string,
+    capabilities: [ClientCapability]
+}
+
+export component AppWindow inherits Window {
+    title: "Messaging Controller";
+
+    in-out property <[UIOption]> options: [];
+    in-out property <[ClientConnection]> connections: [];
+    in property <string> connection_state: "Disconnected";
+
+    callback option_edited(option_name: string, new_value: string);
+    callback capability_ran(client_name: string, capability_name: string, selected_options: [UIOption]);
+
+    TabWidget {
+        Tab {
+            title: "Options";
+            VerticalBox {
+                DynamicForm {
+                    options: root.options;
+                    option_edited(index, new_value) => {
+                        option_edited(options[index].name, new_value);
+                    }
+                }
+                Text {
+                    text: "Connection Status: \{root.connection_state}";
+                }
+            }
+        }
+        Tab {
+            title: "Commands";
+            ScrollView {
+                horizontal-scrollbar-policy: always-off;
+                VerticalBox {
+                    for connection in root.connections: VerticalBox {
+                        Text {
+                            text: "\{connection.display_name}";
+                        }
+
+                        for capability in connection.capabilities: VerticalBox {
+                            Text {
+                                text: "\{capability.display_name}";
+                            }
+
+                            property <[UIOption]> options:  capability.options;
+                            in-out property <[UIOption]> edited: options;
+
+                            VerticalBox {
+                                DynamicForm {
+                                    options: options;
+                                    edited <=> edited;
+
+                                    option_edited(index, new_value) => {
+                                        edited[index].value = new_value;
+                                    }
+                                }
+                                Button {
+                                    text: "Send";
+                                    clicked() => {
+                                        capability_ran(connection.name, capability.name, edited);
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}

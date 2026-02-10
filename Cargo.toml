@@ -1,0 +1,8 @@
+[workspace]
+members = [
+    "example-communication-client",
+    "example-communication-common",
+    "example-communication-controller",
+    "example-communication-server"
+]
+resolver = "3"
