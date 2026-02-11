@@ -20,19 +20,3 @@ jobs:
     secrets:
       username: ${{ github.repository_owner }}
       password: ${{ secrets.GITHUB_TOKEN }}
-  build-client:
-    needs: [build-common]
-    uses: ./.github/workflows/build_rust_release.yml
-    with:
-      path: ./example-communication-client
-    secrets:
-      username: ${{ github.repository_owner }}
-      password: ${{ secrets.GITHUB_TOKEN }}
-  build-controller:
-    needs: [build-common]
-    uses: ./.github/workflows/build_rust_release.yml
-    with:
-      path: ./example-communication-controller
-    secrets:
-      username: ${{ github.repository_owner }}
-      password: ${{ secrets.GITHUB_TOKEN }}
