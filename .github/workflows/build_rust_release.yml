@@ -21,7 +21,7 @@ jobs:
         platform:
           - os-name: Windows-x86_64
             runs-on: windows-latest
-            target: x86_64-pc-windows-
+            target: x86_64-pc-windows-msvc
           # more targets here
     runs-on: ${{ matrix.platform.runs-on }}
     steps:
