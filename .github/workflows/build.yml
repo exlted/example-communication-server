@@ -22,17 +22,19 @@ jobs:
       password: ${{ secrets.REGISTRY_SECRET }}
   build-client:
     needs: [build-common]
-    uses: ./.github/workflows/build_rust_release.yml
+    uses: houseabsolute/actions-rust-cross@v1.0.5
     with:
-      path: ./example-communication-client
+      working-directory: ./example-communication-client
+      target: 'binary-bin-windows-amd64.exe'
     secrets:
       username: ${{ github.repository_owner }}
       password: ${{ secrets.REGISTRY_SECRET }}
   build-controller:
     needs: [build-common]
-    uses: ./.github/workflows/build_rust_release.yml
+    uses: houseabsolute/actions-rust-cross@v1.0.5
     with:
-      path: ./example-communication-controller
+      working-directory: ./example-communication-controller
+      target: 'binary-bin-windows-amd64.exe'
     secrets:
       username: ${{ github.repository_owner }}
       password: ${{ secrets.REGISTRY_SECRET }}
