@@ -40,6 +40,7 @@ impl Default for MyConfig {
 
 impl MyConfig {
     pub fn load() -> MyConfig {
+        println!("Loading MyConfig from {:?}", confy::get_configuration_file_path("play_with_me_controller", None));
         let loaded_settings = confy::load("play_with_me_controller", None);
 
         if loaded_settings.is_err() {
@@ -51,7 +52,7 @@ impl MyConfig {
     }
 
     pub async fn save(&self) {
-        confy::store("play_with_me", None, self).expect("Failed to Store Config");
+        confy::store("play_with_me_controller", None, self).expect("Failed to Store Config");
     }
 
     pub fn fill_data_model(&self) -> Vec<UIOption> {
