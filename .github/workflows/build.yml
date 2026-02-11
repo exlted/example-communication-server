@@ -19,22 +19,20 @@ jobs:
       image_name: ghcr.io/exlted/example-communication-server
     secrets:
       username: ${{ github.repository_owner }}
-      password: ${{ secrets.REGISTRY_SECRET }}
+      password: ${{ secrets.GITHUB_TOKEN }}
   build-client:
     needs: [build-common]
-    uses: houseabsolute/actions-rust-cross@v1.0.5
+    uses: ./.github/workflows/build_rust_release.yml
     with:
-      working-directory: ./example-communication-client
-      target: 'binary-bin-windows-amd64.exe'
+      path: ./example-communication-client
     secrets:
       username: ${{ github.repository_owner }}
-      password: ${{ secrets.REGISTRY_SECRET }}
+      password: ${{ secrets.GITHUB_TOKEN }}
   build-controller:
     needs: [build-common]
-    uses: houseabsolute/actions-rust-cross@v1.0.5
+    uses: ./.github/workflows/build_rust_release.yml
     with:
-      working-directory: ./example-communication-controller
-      target: 'binary-bin-windows-amd64.exe'
+      path: ./example-communication-controller
     secrets:
       username: ${{ github.repository_owner }}
-      password: ${{ secrets.REGISTRY_SECRET }}
+      password: ${{ secrets.GITHUB_TOKEN }}

@@ -15,48 +15,43 @@ on:
 
 jobs:
   build:
-    name: build
-    runs-on: ubuntu-latest
+    name: Build - ${{ matrix.platform.os-name }}
     strategy:
       matrix:
-        include:
-          - rust_target: x86_64-unknown-linux-gnu
-            artifact_name: binary-bin-linux-amd64
-          - rust_target: x86_64-pc-windows-gnu
-            artifact_name: binary-bin-windows-amd64.exe
-
+        platform:
+          - os-name: FreeBSD-x86_64
+            runs-on: ubuntu-24.04
+            target: x86_64-unknown-fre
+          - os-name: Linux-x86_64
+            runs-on: ubuntu-24.04
+            target: x86_64-unknown-linux-
+          - os-name: Linux-aarch64
+            runs-on: ubuntu-24.04
+            target: aarch64-unknown-linux-
+          - os-name: Linux-riscv64
+            runs-on: ubuntu-24.04
+            target: riscv64gc-unknown-linux
+          - os-name: Windows-x86_64
+            runs-on: windows-latest
+            target: x86_64-pc-windows-
+          - os-name: macOS-x86_64
+            runs-on: macOS-latest
+            target: x86_64-apple-da
+          # more targets here
+    runs-on: ${{ matrix.platform.runs-on }}
     steps:
-      - name: checkout code
+      - name: Checkout
         uses: actions/checkout@v4
-
-      - name: Set up Rust
-        uses: dtolnay/rust-toolchain@stable
+      - name: Build binary
+        uses: houseabsolute/actions-rust-cross@v1
         with:
-          toolchain: stable
-          target: ${{ matrix.rust_target }}
-
-      - name: Set up MinGW
-        uses: egor-tensin/setup-mingw@v3
+          command: build
+          target: ${{ matrix.platform.target }}
+          working-directory: ${{ inputs.path }}
+          args: "--locked --release"
+          strip: true
+      - name: Publish artifacts and release
+        uses: houseabsolute/actions-rust-release@v0
         with:
-          platform: x64
-
-      - name: Setup OpenSSL for native builds
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y pkg-config libssl-dev
-
-      - name: Build the binary
-        run: |
-          cd ${{ inputs.path }}
-          cargo build --release --target ${{ matrix.rust_target }}
-          if [[ "${{ matrix.artifact_name }}" == *.exe ]]; then
-            mv target/${{ matrix.rust_target }}/release/binary.exe ${{ matrix.artifact_name }}
-          else
-            mv target/${{ matrix.rust_target }}/release/binary ${{ matrix.artifact_name }}
-          fi
-
-      - name: upload binaries to release
-        uses: svenstaro/upload-release-action@v2
-        with:
-          file: ${{ matrix.artifact_name }}
-          overwrite: true
+          executable-name: ubi
+          target: ${{ matrix.platform.target }}
