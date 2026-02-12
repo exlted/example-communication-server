@@ -4,8 +4,8 @@ version = "0.1.0"
 edition = "2024"
 
 [dependencies]
-example-communication-common = {version = "0.1.0", path = "../example-communication-common", features = ["client"]}
-tokio = { version = "1.49.0",  features = ["rt-multi-thread"]}
+example-communication-common = {version = "0.1.1", path = "../example-communication-common", features = ["client"]}
+tokio = { version = "1.49.0",  features = ["rt-multi-thread", "fs"]}
 slint = { version = "1.14.1", features = ["renderer-femtovg"] }
 lofty = "0.22.4"
 rodio = "0.21.1"
