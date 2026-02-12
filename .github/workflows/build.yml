@@ -19,4 +19,4 @@ jobs:
       image_name: ghcr.io/exlted/example-communication-server
     secrets:
       username: ${{ github.repository_owner }}
-      password: ${{ secrets.GITHUB_TOKEN }}
+      password: ${{ secrets.REGISTRY_SECRET }}
