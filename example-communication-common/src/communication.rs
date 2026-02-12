@@ -48,7 +48,8 @@ impl Display for ConnectionInfo {
 
 #[derive(Serialize, Deserialize, Clone)]
 pub enum ControlTypes {
-    Message
+    Message,
+    TransferFile,
 }
 
 pub struct ControlOption {
@@ -67,6 +68,7 @@ impl ControlTypes {
     pub fn as_str(&self) -> String {
         match self {
             ControlTypes::Message => {"Message".to_string()}
+            ControlTypes::TransferFile => {"TransferFile".to_string()}
         }
     }
     pub fn to_definition(&self) -> ControlDefinition {
@@ -81,6 +83,17 @@ impl ControlTypes {
                         default_value: "".to_string(),
                     }],
                 }
+            },
+            ControlTypes::TransferFile => {
+                ControlDefinition {
+                    display_name: "Transfer File".to_string(),
+                    name: self.as_str(),
+                    options: vec![ControlOption {
+                       display_name: "File Location".to_string(),
+                        name: "File".to_string(),
+                        default_value: "".to_string(),
+                    }],
+                }
             }
         }
     }
@@ -90,7 +103,8 @@ impl ControlTypes {
 pub enum ControlMessage {
     Message {
         text: String
-    }
+    },
+    TransferFile,
 }
 
 
@@ -117,7 +131,31 @@ pub enum CommandType {
         sender_uuid: String,
         list: Vec<ControlTypes>
     },
-    Ack
+    Ack,
+    // File Transfer
+    StartFileTransfer {
+        name: String,
+        chunk_count: u64,
+        blob_size: usize,
+        checksum: String,
+        return_uuid: String
+    },
+    FileTransferBlob {
+        name: String,
+        chunk_num: i32,
+        blob: Vec<u8>,
+        return_uuid: String
+    },
+    FileTransferAck {
+        name: String,
+        start: bool,
+        chunk_num: i32,
+    },
+    FileTransferNack {
+        name: String,
+        start: bool,
+        chunk_num: i32,
+    }
 }
 
 #[derive(Serialize, Deserialize, Clone)]
