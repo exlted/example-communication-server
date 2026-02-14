@@ -1,16 +1,11 @@
-import { HorizontalBox, LineEdit } from "std-widgets.slint";
-
-export struct UIOption {
-    name: string,
-    display: string,
-    value: string,
-}
+import { HorizontalBox, LineEdit, CheckBox } from "std-widgets.slint";
 
 export component LabeledLineEdit {
     in property <string> label: "Label";
     in-out property <string> text: "Default Value";
     callback line_edited(text: string);
     callback text_modified(text: string);
+    width: 100%;
     HorizontalBox {
         Text {
             text: "\{root.label}";
@@ -30,21 +25,19 @@ export component LabeledLineEdit {
     }
 }
 
-export component DynamicForm {
-    in property <[UIOption]> options;
-    in-out property <[UIOption]> edited: options;
-    callback option_edited(index: int, new_value: string);
-    VerticalLayout {
-        for opt[index] in edited: LabeledLineEdit {
-            label: opt.display;
-            text: opt.value;
-
-            line_edited(text) => {
-                option_edited(index, text);
-            }
-
-            text_modified(text) => {
-                edited[index].value = text;
+export component LabledCheckBox {
+    in property <string> label: "Label";
+    in-out property <bool> checked: false;
+    callback changed(new_val: string);
+    HorizontalBox {
+        Text {
+            text: "\{root.label}";
+            vertical-alignment: TextVerticalAlignment.center;
+        }
+        CheckBox {
+            checked <=> checked;
+            toggled() => {
+                changed(self.checked ? "true" : "false")
             }
         }
     }

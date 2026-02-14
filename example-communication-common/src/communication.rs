@@ -55,7 +55,13 @@ pub enum ControlTypes {
 pub struct ControlOption {
     pub display_name: String,
     pub name: String,
+    pub ui_type: UITypes,
     pub default_value: String,
+}
+
+pub enum UITypes {
+    Text,
+    Checkbox
 }
 
 pub struct ControlDefinition {
@@ -80,6 +86,7 @@ impl ControlTypes {
                     options: vec![ControlOption {
                         display_name: "Text".to_string(),
                         name: "Text".to_string(),
+                        ui_type: UITypes::Text,
                         default_value: "".to_string(),
                     }],
                 }
@@ -91,6 +98,7 @@ impl ControlTypes {
                     options: vec![ControlOption {
                        display_name: "File Location".to_string(),
                         name: "File".to_string(),
+                        ui_type: UITypes::Text,
                         default_value: "".to_string(),
                     }],
                 }
@@ -107,7 +115,11 @@ pub enum ControlMessage {
     TransferFile,
 }
 
-
+#[derive(Serialize, Deserialize, Clone)]
+pub struct FileDefinition {
+    pub path: String,
+    pub file_type: String
+}
 
 #[derive(Serialize, Deserialize, Clone)]
 pub enum CommandType {
@@ -150,11 +162,26 @@ pub enum CommandType {
         name: String,
         start: bool,
         chunk_num: i32,
+        whole: bool,
     },
     FileTransferNack {
         name: String,
         start: bool,
         chunk_num: i32,
+        whole: bool
+    },
+    // Files
+    AddFileWatch {
+        return_uuid: String
+    },
+    ProvideFiles {
+        uuid: String,
+        files: Vec<FileDefinition>
+    },
+    UpdateFile {
+        uuid: String,
+        file: FileDefinition,
+        add: bool,
     }
 }
 

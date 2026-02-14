@@ -1,6 +1,6 @@
 [package]
 name = "example-communication-common"
-version = "0.1.1"
+version = "0.1.2"
 authors = ["exlted <exltedofdrg@gmail.com>"]
 license = "MIT"
 description = "Helper library for the Example-Communication Project"
@@ -10,13 +10,15 @@ edition = "2024"
 
 [features]
 test = ["client", "server"]
-client = ["dep:tokio-tungstenite", "dep:tokio", "dep:futures-util", "dep:tokio-stream"]
+client = ["dep:tokio-tungstenite", "dep:tokio", "dep:futures-util", "dep:tokio-stream", "dep:bytes", "dep:checkasum"]
 server = []
 
 [dependencies]
 tokio-tungstenite = { version = "0.28.0", features = ["native-tls"], optional = true }
-tokio = { version = "1.49.0", optional = true, features = ["sync", "rt", "macros"]}
+tokio = { version = "1.49.0", optional = true, features = ["sync", "rt", "macros", "fs"]}
 serde = { version = "1.0.228", features = ["derive"] }
 serde_json = "1.0.149"
 tokio-stream = { version = "0.1.18" , optional = true}
 futures-util = { version = "0.3.31"  , optional = true}
+bytes = { version = "1.11.0", optional = true }
+checkasum = { version = "3.0.0", optional = true }

@@ -43,7 +43,7 @@ pub async fn communication_thread(ui: UI, client_cache: ThreadSafeClientCache, s
     }
 }
 async fn handle_message(message: WebSocketMessage, status: &mut ControllerStatus, settings: ThreadSafeSettings, client_cache: ThreadSafeClientCache) {
-    match message.command {
+    match message.command.clone() {
         CommandType::Welcome{ uuid } => {
             let settings = settings.lock().await;
             let mut client_cache = client_cache.lock().await;
@@ -107,6 +107,29 @@ async fn handle_message(message: WebSocketMessage, status: &mut ControllerStatus
                 spawn_local(update_connection_info(ui, client_cache_clone)).expect("Failed to update_connection");
             }).expect("Failed to update connection status");
         }
+
+        CommandType::FileTransferAck { name, .. } | CommandType::FileTransferNack { name, .. } => {
+
+            let mut locked_cache = client_cache.lock().await;
+            
+            if let Some(thread) = locked_cache.file_transfer_threads.get(&name) {
+                if !thread.is_closed() {
+                    thread.send(message.command).expect("Failed to send message to file transfer thread");
+                }
+                else {
+                    locked_cache.file_transfer_threads.remove(&name);
+                }
+            }
+        }
+
+        CommandType::ProvideFiles { uuid, files} => {
+            client_cache.lock().await.set_files(uuid, files);
+        }
+
+        CommandType::UpdateFile { uuid, file, add} => {
+            client_cache.lock().await.update_file(uuid, file, add);
+        }
+
         _ => {}
     }
 }

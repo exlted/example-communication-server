@@ -1,10 +1,11 @@
 #![cfg_attr(not(debug_assertions), windows_subsystem = "windows")]
 
 use std::collections::HashMap;
+use std::path::{Path};
 use std::sync::Arc;
 use slint::{spawn_local, Model, ModelRc, SharedString, VecModel, Weak};
 use tokio::sync::Notify;
-use example_communication_common::{Destination, Sender, make_thread_safe, CommandType, ControlMessage, WebSocketMessage};
+use example_communication_common::{Destination, Sender, make_thread_safe, CommandType, ControlMessage, WebSocketMessage, start_file_transfer};
 use crate::communication::communication_thread;
 use crate::settings::{ClientCache, MyConfig, ThreadSafeClientCache, ThreadSafeSettings};
 
@@ -42,6 +43,15 @@ pub async fn run_command(client_cache: ThreadSafeClientCache, destination_uuid: 
                 }
             }
         }
+        "TransferFile" => {
+            let sender = start_file_transfer(hashed_options["File"].value.to_string(), destination_uuid.to_string().clone(), client_cache.clone()).await;
+
+            if let Some(sender) = sender {
+                client_cache.lock().await.file_transfer_threads.insert(Path::new(&hashed_options["File"].value.to_string()).file_name().unwrap().to_str().unwrap().to_string(), sender);
+            }
+
+            CommandType::Ack {}
+        }
         _ => {
             CommandType::Ack {}
         }
@@ -67,6 +77,8 @@ async fn main() {
         to_server: None,
         connected_clients: Vec::new(),
         client_capabilities: HashMap::new(),
+        file_transfer_threads: HashMap::new(),
+        client_files: HashMap::new(),
     });
     let settings = make_thread_safe(settings);
 
