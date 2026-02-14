@@ -1,4 +1,4 @@
-import { HorizontalBox, LineEdit, CheckBox } from "std-widgets.slint";
+import { HorizontalBox, LineEdit, CheckBox, ComboBox } from "std-widgets.slint";
 
 export component LabeledLineEdit {
     in property <string> label: "Label";
@@ -38,6 +38,26 @@ export component LabledCheckBox {
             checked <=> checked;
             toggled() => {
                 changed(self.checked ? "true" : "false")
+            }
+        }
+    }
+}
+
+export component LabeledComboBox {
+    in property <string> label: "Label";
+    in property <[string]> options: ["first", "second", "third"];
+    in-out property <string> current_value: "";
+    callback changed (new_val: string);
+    HorizontalBox {
+        Text {
+            text: "\{root.label}";
+            vertical-alignment: TextVerticalAlignment.center;
+        }
+        ComboBox {
+            model: root.options;
+            current-value <=> root.current_value;
+            selected(value) => {
+                changed(value);
             }
         }
     }

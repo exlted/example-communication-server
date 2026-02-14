@@ -50,6 +50,7 @@ impl Display for ConnectionInfo {
 pub enum ControlTypes {
     Message,
     TransferFile,
+    DeleteFile,
 }
 
 pub struct ControlOption {
@@ -57,11 +58,13 @@ pub struct ControlOption {
     pub name: String,
     pub ui_type: UITypes,
     pub default_value: String,
+    pub acceptable_option_types: Vec<String>
 }
 
 pub enum UITypes {
     Text,
-    Checkbox
+    Checkbox,
+    ComboBox,
 }
 
 pub struct ControlDefinition {
@@ -75,6 +78,7 @@ impl ControlTypes {
         match self {
             ControlTypes::Message => {"Message".to_string()}
             ControlTypes::TransferFile => {"TransferFile".to_string()}
+            ControlTypes::DeleteFile => {"DeleteFile".to_string()}
         }
     }
     pub fn to_definition(&self) -> ControlDefinition {
@@ -88,6 +92,7 @@ impl ControlTypes {
                         name: "Text".to_string(),
                         ui_type: UITypes::Text,
                         default_value: "".to_string(),
+                        acceptable_option_types: vec![],
                     }],
                 }
             },
@@ -100,6 +105,20 @@ impl ControlTypes {
                         name: "File".to_string(),
                         ui_type: UITypes::Text,
                         default_value: "".to_string(),
+                        acceptable_option_types: vec![],
+                    }],
+                }
+            }
+            ControlTypes::DeleteFile => {
+                ControlDefinition {
+                    display_name: "Delete File".to_string(),
+                    name: self.as_str(),
+                    options: vec![ControlOption {
+                        display_name: "File To Delete".to_string(),
+                        name: "File".to_string(),
+                        ui_type: UITypes::ComboBox,
+                        default_value: "".to_string(),
+                        acceptable_option_types: vec!["ALL".to_string()],
                     }],
                 }
             }

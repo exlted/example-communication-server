@@ -7,7 +7,7 @@ use tokio::sync::{Notify};
 use example_communication_common::{CommandType, ConnectionInfo, ConnectionSettings, ConnectionType, ControlTypes, Destination, FileDefinition, Sender, ThreadSafe, UITypes, WebSocketMessage};
 use serde::{Serialize, Deserialize};
 use field_name::FieldNames;
-use slint::{ModelRc, VecModel};
+use slint::{ModelRc, SharedString, VecModel};
 use crate::{ClientCapability, ClientConnection, UIOption};
 
 pub type ThreadSafeSettings = ThreadSafe<MyConfig>;
@@ -63,18 +63,21 @@ impl MyConfig {
                 name: MyConfig::CLIENT_NAME.into(),
                 r#type: UIType::Text,
                 value: self.client_name.clone().into(),
+                options: ModelRc::new(VecModel::default()),
             },
             UIOption{
                 display: "Server URL".into(),
                 name: MyConfig::ADDRESS.into(),
                 r#type: UIType::Text,
                 value: self.address.clone().into(),
+                options: ModelRc::new(VecModel::default()),
             },
             UIOption{
                 display: "API Key".into(),
                 name: MyConfig::KEY.into(),
                 r#type: UIType::Text,
                 value: self.key.clone().into(),
+                options: ModelRc::new(VecModel::default()),
             }
         )
     }
@@ -192,13 +195,37 @@ impl ClientCache {
                     let ui_type = match option.ui_type {
                         UITypes::Text => {UIType::Text}
                         UITypes::Checkbox => {UIType::Checkbox}
+                        UITypes::ComboBox => {UIType::ComboBox}
                     };
+
+                    let mut options: Vec<SharedString> = Vec::new();
+                    if option.acceptable_option_types.len() > 0 {
+                        if let Some(files) = self.client_files.get(&uuid) {
+                            if option.acceptable_option_types[0] == "ALL".to_string() {
+                                for file_type in files {
+                                    for file in file_type.1 {
+                                        options.push(file.clone().into());
+                                    }
+                                }
+                            }
+                            else {
+                                for file_type in option.acceptable_option_types {
+                                    if let Some(files) = files.get(&file_type) {
+                                        for file in files {
+                                            options.push(file.clone().into());
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
 
                     definition_options.push(UIOption {
                         display: option.display_name.into(),
                         name: option.name.into(),
                         r#type: ui_type.into(),
                         value: option.default_value.into(),
+                        options: ModelRc::new(VecModel::from(options)),
                     });
                 }
 

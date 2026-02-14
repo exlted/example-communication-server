@@ -124,7 +124,7 @@ async fn handle_message(message: WebSocketMessage, status: &mut ClientStatus, se
             locked_cache.try_send(WebSocketMessage {
                 command: CommandType::ProvideCapabilities {
                     sender_uuid: locked_cache.uuid.clone(),
-                    list: vec![ControlTypes::Message, ControlTypes::TransferFile],
+                    list: vec![ControlTypes::Message, ControlTypes::TransferFile, ControlTypes::DeleteFile],
                 },
                 destination: Destination::Single{destination_uuid: reply_uuid},
             }).expect("Failed to send message");

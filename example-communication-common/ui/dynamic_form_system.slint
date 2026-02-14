@@ -1,15 +1,17 @@
-import { LabeledLineEdit, LabledCheckBox } from "common-components.slint";
+import { LabeledLineEdit, LabledCheckBox, LabeledComboBox } from "common-components.slint";
 
 export enum UIType {
     Text,
-    Checkbox
+    Checkbox,
+    ComboBox
 }
 
 export struct UIOption {
     name: string,
     display: string,
     value: string,
-    type: UIType
+    type: UIType,
+    options: [string],
 }
 
 export component DynamicField {
@@ -37,6 +39,16 @@ export component DynamicField {
     if option.type == UIType.Checkbox: LabledCheckBox {
         label: option.display;
         checked: option.value == "true" ? true : false;
+
+        changed(new-val) => {
+            modified(root.index, new-val);
+            edited(root.index, new-val);
+        }
+    }
+    if option.type == UIType.ComboBox: LabeledComboBox {
+        label: option.display;
+        current_value: option.value;
+        options: option.options;
 
         changed(new-val) => {
             modified(root.index, new-val);

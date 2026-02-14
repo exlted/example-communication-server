@@ -7,6 +7,7 @@ use example_communication_common::{CommandType, ConnectionInfo, ConnectionSettin
 use serde::{Serialize, Deserialize};
 use field_name::FieldNames;
 use notify::{RecommendedWatcher, RecursiveMode, Watcher};
+use slint::{ModelRc, VecModel};
 use walkdir::WalkDir;
 use crate::{UIOption, UIType};
 
@@ -76,30 +77,35 @@ impl MyConfig {
                 name: MyConfig::CLIENT_NAME.into(),
                 r#type: UIType::Text,
                 value: self.client_name.clone().into(),
+                options: ModelRc::new(VecModel::default()),
             },
             UIOption {
                 display: "Server URL".into(),
                 name: MyConfig::ADDRESS.into(),
                 r#type: UIType::Text,
                 value: self.address.clone().into(),
+                options: ModelRc::new(VecModel::default()),
             },
             UIOption {
                 display: "API Key".into(),
                 name: MyConfig::KEY.into(),
                 r#type: UIType::Text,
                 value: self.key.clone().into(),
+                options: ModelRc::new(VecModel::default()),
             },
             UIOption {
                 display: "Notification Location".into(),
                 name: MyConfig::SOUND_SOURCE.into(),
                 r#type: UIType::Text,
                 value: self.sound_source.clone().into(),
+                options: ModelRc::new(VecModel::default()),
             },
             UIOption {
                 display: "File Transfer Destination".into(),
                 name: MyConfig::FILE_TRANSFER_LOCATION.into(),
                 r#type: UIType::Text,
                 value: self.file_transfer_location.clone().into(),
+                options: ModelRc::new(VecModel::default()),
             }
         )
     }
