@@ -6,6 +6,7 @@ mod settings;
 mod commands;
 
 use std::sync::Arc;
+use notify::{Event};
 use communication::communication_thread;
 slint::include_modules!();
 use slint::{spawn_local, SharedString, Weak};
@@ -30,11 +31,21 @@ pub async fn main() {
     let options_model = std::rc::Rc::new(slint::VecModel::from(settings.fill_data_model()));
     app.set_options(options_model.clone().into());
 
-    let client_cache = make_thread_safe(ClientCache{
+    let (tx, rx) = tokio::sync::mpsc::unbounded_channel::<notify::Result<Event>>();
+    let watcher = notify::recommended_watcher(move |result| {tx.send(result).expect("Failed to notify of file watch change.")}).unwrap();
+
+    let mut client_cache = ClientCache{
         uuid: "".to_string(),
         to_server: None,
-    });
+        current_directory: "".to_string(),
+        file_watcher: watcher,
+        file_listeners: Vec::new(),
+    };
+
+    client_cache.watch_directory(settings.file_transfer_location.clone());
+
     let settings = make_thread_safe(settings);
+    let client_cache = make_thread_safe(client_cache);
 
     let connection_data_changed = Arc::new(Notify::new());
 
@@ -50,7 +61,7 @@ pub async fn main() {
     };
 
 
-    tokio::spawn(communication_thread(ui, client_cache.clone(), settings.clone(), connection_data_changed));
+    tokio::spawn(communication_thread(ui, client_cache.clone(), settings.clone(), connection_data_changed, rx));
 
     app.show().expect("Failed to show app window");
 

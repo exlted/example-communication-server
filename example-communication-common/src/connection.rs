@@ -28,6 +28,7 @@ pub trait Status {
 }
 
 pub trait Sender {
+    fn get_uuid(&self) -> String;
     fn try_send(&self, message: WebSocketMessage) -> Result<(), SendError<WebSocketMessage>>;
     fn drop_connection(&mut self);
     fn set_connection(&mut self, new_sender: UnboundedSender<WebSocketMessage>);

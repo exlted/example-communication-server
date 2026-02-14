@@ -12,6 +12,8 @@ rodio = "0.21.1"
 serde = { version = "1.0.228", features = ["derive"] }
 confy = { version="2.0.0", features =  ["ron_conf"], default-features = false}
 field_name = "0.2.0"
+notify = "8.2.0"
+walkdir = "2.5.0"
 
 [build-dependencies]
 slint-build = "1.14"

@@ -1,15 +1,16 @@
+use crate::UIType;
 use std::collections::HashMap;
 use tokio::sync::mpsc::error::SendError;
 use std::sync::Arc;
 use tokio::sync::mpsc::UnboundedSender;
-use tokio::sync::{Mutex, Notify};
-use example_communication_common::{CommandType, ConnectionInfo, ConnectionSettings, ConnectionType, ControlTypes, Destination, Sender, WebSocketMessage};
+use tokio::sync::{Notify};
+use example_communication_common::{CommandType, ConnectionInfo, ConnectionSettings, ConnectionType, ControlTypes, Destination, FileDefinition, Sender, ThreadSafe, UITypes, WebSocketMessage};
 use serde::{Serialize, Deserialize};
 use field_name::FieldNames;
 use slint::{ModelRc, VecModel};
 use crate::{ClientCapability, ClientConnection, UIOption};
 
-pub type ThreadSafeSettings = Arc<Mutex<MyConfig>>;
+pub type ThreadSafeSettings = ThreadSafe<MyConfig>;
 #[derive(FieldNames, Serialize, Deserialize)]
 pub struct MyConfig {
     #[field_name(rename = "name")]
@@ -60,16 +61,19 @@ impl MyConfig {
             UIOption{
                 display: "Client Name".into(),
                 name: MyConfig::CLIENT_NAME.into(),
+                r#type: UIType::Text,
                 value: self.client_name.clone().into(),
             },
             UIOption{
                 display: "Server URL".into(),
                 name: MyConfig::ADDRESS.into(),
+                r#type: UIType::Text,
                 value: self.address.clone().into(),
             },
             UIOption{
                 display: "API Key".into(),
                 name: MyConfig::KEY.into(),
+                r#type: UIType::Text,
                 value: self.key.clone().into(),
             }
         )
@@ -109,15 +113,20 @@ impl MyConfig {
     }
 }
 
-pub type ThreadSafeClientCache = Arc<Mutex<ClientCache>>;
+pub type ThreadSafeClientCache = ThreadSafe<ClientCache>;
 pub struct ClientCache {
     pub local_uuid: String,
     pub to_server: Option<UnboundedSender<WebSocketMessage>>,
     pub connected_clients: Vec<ConnectionInfo>,
     pub client_capabilities: HashMap<String, Vec<ControlTypes>>,
+    pub client_files: HashMap<String, HashMap<String, Vec<String>>>,
+    pub file_transfer_threads: HashMap<String, UnboundedSender<CommandType>>
 }
 
 impl Sender for ClientCache {
+    fn get_uuid(&self) -> String {
+        self.local_uuid.clone()
+    }
     fn try_send(&self, message: WebSocketMessage) -> Result<(), SendError<WebSocketMessage>>{
         if let Some(to_server) = &self.to_server {
             return to_server.send(message)
@@ -159,6 +168,13 @@ impl ClientCache {
                 destination: Destination::Single{destination_uuid: connection_info.uuid.clone()},
             }).expect("Failed to Send Message");
 
+            self.try_send(WebSocketMessage {
+                command: CommandType::AddFileWatch {
+                    return_uuid: self.local_uuid.clone()
+                },
+                destination: Destination::Single{destination_uuid: connection_info.uuid.clone()},
+            }).expect("Failed to Send Message");
+
             self.connected_clients.push(connection_info);
         }
     }
@@ -173,9 +189,15 @@ impl ClientCache {
 
                 let mut definition_options = Vec::new();
                 for option in definition.options {
+                    let ui_type = match option.ui_type {
+                        UITypes::Text => {UIType::Text}
+                        UITypes::Checkbox => {UIType::Checkbox}
+                    };
+
                     definition_options.push(UIOption {
                         display: option.display_name.into(),
                         name: option.name.into(),
+                        r#type: ui_type.into(),
                         value: option.default_value.into(),
                     });
                 }
@@ -207,5 +229,37 @@ impl ClientCache {
         }
 
         rv
+    }
+
+    pub fn set_files(&mut self, uuid: String, files: Vec<FileDefinition>) {
+        let mut new_file_set: HashMap<String, Vec<String>> = HashMap::new();
+
+        for file in files {
+            if let Some(file_set) = new_file_set.get_mut(&file.file_type) {
+                file_set.push(file.path);
+            }
+            else {
+                new_file_set.insert(file.file_type.clone(), vec![file.path]);
+            }
+        }
+
+        if self.client_files.contains_key(&uuid) {
+            self.client_files.remove(&uuid);
+        }
+
+        self.client_files.insert(uuid, new_file_set);
+    }
+
+    pub fn update_file(&mut self, uuid: String, file: FileDefinition, add: bool) {
+        if let Some(client_files) = self.client_files.get_mut(&uuid) {
+            if let Some(file_set) = client_files.get_mut(&file.file_type) {
+                if add {
+                    file_set.push(file.path);
+                }
+                else {
+                    file_set.retain(|check_file| *check_file != file.path);
+                }
+            }
+        }
     }
 }
