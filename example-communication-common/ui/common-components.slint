@@ -48,12 +48,14 @@ export component LabeledComboBox {
     in property <[string]> options: ["first", "second", "third"];
     in-out property <string> current_value: "";
     callback changed (new_val: string);
+    width: 100%;
     HorizontalBox {
-        Text {
+        label_element := Text {
             text: "\{root.label}";
             vertical-alignment: TextVerticalAlignment.center;
         }
         ComboBox {
+            horizontal-stretch: 1;
             model: root.options;
             current-value <=> root.current_value;
             selected(value) => {

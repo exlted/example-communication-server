@@ -124,10 +124,18 @@ async fn handle_message(message: WebSocketMessage, status: &mut ControllerStatus
 
         CommandType::ProvideFiles { uuid, files} => {
             client_cache.lock().await.set_files(uuid, files);
+            let client_cache_clone = client_cache.clone();
+            status.ui.app_window.upgrade_in_event_loop(|ui| {
+                spawn_local(update_connection_info(ui, client_cache_clone)).expect("Failed to update_connection");
+            }).expect("Failed to update connection status");
         }
 
         CommandType::UpdateFile { uuid, file, add} => {
             client_cache.lock().await.update_file(uuid, file, add);
+            let client_cache_clone = client_cache.clone();
+            status.ui.app_window.upgrade_in_event_loop(|ui| {
+                spawn_local(update_connection_info(ui, client_cache_clone)).expect("Failed to update_connection");
+            }).expect("Failed to update connection status");
         }
 
         _ => {}

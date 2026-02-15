@@ -24,9 +24,7 @@ pub trait FileTransfer {
 impl FileTransferClient {
     pub async fn new(name: String, settings: ThreadSafe<impl FileTransfer>) -> Self {
         let destination = settings.lock().await.get_transfer_location();
-        let path = Path::new(&destination);
-        let filename = Path::new(&name);
-        let path = path.join(filename.extension().unwrap()).join(filename);
+        let path = Path::new(&destination).join(&name);
 
         create_dir_all(path.parent().unwrap()).await.unwrap();
         let file = File::create(path.clone()).await.unwrap();

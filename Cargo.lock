@@ -918,7 +918,7 @@ name = "client"
 version = "0.1.0"
 dependencies = [
  "confy",
- "example-communication-common 0.1.3",
+ "example-communication-common 0.1.4",
  "field_name",
  "lofty",
  "notify",
@@ -1031,7 +1031,7 @@ name = "controller"
 version = "0.1.0"
 dependencies = [
  "confy",
- "example-communication-common 0.1.3",
+ "example-communication-common 0.1.4",
  "field_name",
  "serde",
  "slint",
@@ -1615,6 +1615,16 @@ dependencies = [
 [[package]]
 name = "example-communication-common"
 version = "0.1.3"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "ddcf9fe161fdf5e6f08624148834921574736f55fabdedac675fa321987afa83"
+dependencies = [
+ "serde",
+ "serde_json",
+]
+
+[[package]]
+name = "example-communication-common"
+version = "0.1.4"
 dependencies = [
  "bytes",
  "checkasum",
@@ -1624,16 +1634,6 @@ dependencies = [
  "tokio",
  "tokio-stream",
  "tokio-tungstenite 0.28.0",
-]
-
-[[package]]
-name = "example-communication-common"
-version = "0.1.3"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "ddcf9fe161fdf5e6f08624148834921574736f55fabdedac675fa321987afa83"
-dependencies = [
- "serde",
- "serde_json",
 ]
 
 [[package]]
@@ -1884,15 +1884,6 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "cb4cb245038516f5f85277875cdaa4f7d2c9a0fa0468de06ed190163b1581fcf"
 dependencies = [
  "percent-encoding",
-]
-
-[[package]]
-name = "fsevent-sys"
-version = "4.1.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "76ee7a02da4d231650c7cea31349b889be2f45ddb3ef3032d2ec8185f6313fd2"
-dependencies = [
- "libc",
 ]
 
 [[package]]
@@ -3444,20 +3435,22 @@ checksum = "0676bb32a98c1a483ce53e500a81ad9c3d5b3f7c920c28c24e9cb0980d0b5bc8"
 
 [[package]]
 name = "notify"
-version = "8.2.0"
+version = "9.0.0-rc.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "4d3d07927151ff8575b7087f245456e549fea62edf0ec4e565a5ee50c8402bc3"
+checksum = "c8b6510a5042c64929d0278a8d24f5f90aa3a9b5be52e08e4f8bf7403adb01dc"
 dependencies = [
  "bitflags 2.10.0",
- "fsevent-sys",
  "inotify",
  "kqueue",
  "libc",
  "log",
  "mio",
  "notify-types",
+ "objc2-core-foundation",
+ "objc2-core-services",
  "walkdir",
- "windows-sys 0.60.2",
+ "windows-sys 0.61.2",
+ "xxhash-rust",
 ]
 
 [[package]]
@@ -3755,6 +3748,16 @@ dependencies = [
  "objc2 0.5.2",
  "objc2-contacts",
  "objc2-foundation 0.2.2",
+]
+
+[[package]]
+name = "objc2-core-services"
+version = "0.3.2"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "583300ad934cba24ff5292aee751ecc070f7ca6b39a574cc21b7b5e588e06a0b"
+dependencies = [
+ "libc",
+ "objc2-core-foundation",
 ]
 
 [[package]]
@@ -4829,7 +4832,7 @@ dependencies = [
 name = "server"
 version = "0.1.6"
 dependencies = [
- "example-communication-common 0.1.3 (registry+https://github.com/rust-lang/crates.io-index)",
+ "example-communication-common 0.1.3",
  "futures",
  "log",
  "serde_json",
@@ -7099,6 +7102,12 @@ name = "xmlwriter"
 version = "0.1.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "ec7a2a501ed189703dba8b08142f057e887dfc4b2cc4db2d343ac6376ba3e0b9"
+
+[[package]]
+name = "xxhash-rust"
+version = "0.8.15"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "fdd20c5420375476fbd4394763288da7eb0cc0b8c11deed431a91562af7335d3"
 
 [[package]]
 name = "y4m"

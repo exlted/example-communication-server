@@ -1,7 +1,7 @@
 use std::collections::HashMap;
+use std::path::Path;
 use std::sync::Arc;
 use notify::{Event, EventKind};
-use notify::event::{CreateKind, RemoveKind};
 use slint::{spawn_local, ComponentHandle};
 use tokio::select;
 use tokio::sync::mpsc::UnboundedReceiver;
@@ -51,21 +51,11 @@ pub async fn communication_thread(ui: UI, client_cache: ThreadSafeClientCache, s
             event = file_watcher_notify.recv() => {
                 if let Some(Ok(event)) = event {
                     match event.kind {
-                        EventKind::Create(kind) => {
-                            match kind {
-                                CreateKind::File => {
-                                    notify_file_listeners(true, event, client_cache.clone()).await;
-                                }
-                                _ => {}
-                            }
+                        EventKind::Create(..) => {
+                            notify_file_listeners(true, event, client_cache.clone()).await;
                         }
-                        EventKind::Remove(kind) => {
-                            match kind {
-                                RemoveKind::File => {
-                                    notify_file_listeners(false, event, client_cache.clone()).await;
-                                }
-                                _ => {}
-                            }
+                        EventKind::Remove(..) => {
+                            notify_file_listeners(false, event, client_cache.clone()).await;
                         }
                         _ => {}
                     }
@@ -187,5 +177,9 @@ async fn handle_control_message(message: ControlMessage, status: &mut ClientStat
             }).expect("Failed to spawn message box");
         }
         ControlMessage::TransferFile => {}
+        ControlMessage::DeleteFile {path} => {
+            let path = Path::new(&settings.lock().await.file_transfer_location).join(&path);
+            std::fs::remove_file(path).expect("Failed to remove file");
+        }
     }
 }
