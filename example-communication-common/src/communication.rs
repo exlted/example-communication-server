@@ -132,6 +132,9 @@ pub enum ControlMessage {
         text: String
     },
     TransferFile,
+    DeleteFile {
+        path: String
+    }
 }
 
 #[derive(Serialize, Deserialize, Clone)]

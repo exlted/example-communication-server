@@ -52,6 +52,13 @@ pub async fn run_command(client_cache: ThreadSafeClientCache, destination_uuid: 
 
             CommandType::Ack {}
         }
+        "DeleteFile" => {
+            CommandType::Control {
+                message_type: ControlMessage::DeleteFile {
+                    path: hashed_options["File"].value.to_string(),
+                }
+            }
+        }
         _ => {
             CommandType::Ack {}
         }
