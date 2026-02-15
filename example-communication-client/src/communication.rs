@@ -171,6 +171,7 @@ async fn handle_message(message: WebSocketMessage, status: &mut ClientStatus, se
 
 async fn handle_control_message(message: ControlMessage, status: &mut ClientStatus, settings: ThreadSafeSettings, _client_cache: ThreadSafeClientCache) {
     match message {
+        ControlMessage::Default => {}
         ControlMessage::Message { text } => {
             status.ui.app_window.upgrade_in_event_loop(move |ui| {
                 spawn_local(spawn_message_box(text, ui.as_weak(), settings.clone())).expect("Failed to spawn message box");
