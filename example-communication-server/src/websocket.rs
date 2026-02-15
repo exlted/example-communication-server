@@ -10,7 +10,11 @@ use example_communication_common::{CommandType, ConnectionInfo, Destination, Web
 
 async fn send_packet(channel: &UnboundedSender<Result<Message, Error>>, packet: WebSocketMessage) {
     let reply = serde_json::to_string(&packet).expect("Failed to serialize GetConnections Reply");
-    channel.send(Ok(Message::text(reply))).ok();
+    send_deserialized_packet(channel, reply).await
+}
+
+async fn send_deserialized_packet(channel: &UnboundedSender<Result<Message, Error>>, packet: String) {
+    channel.send(Ok(Message::text(packet))).ok();
 }
 
 pub async fn client_connection(ws: WebSocket, clients: ClientMap) {
@@ -168,7 +172,7 @@ async fn client_msg(client_id: &str, msg: Message, clients: &ClientMap) {
                 Destination::Single { destination_uuid } => {
                     let destination_connection = locked.get(destination_uuid);
                     if let Some(destination_connection) = destination_connection {
-                        send_packet(&destination_connection.sender, data).await;
+                        send_deserialized_packet(&destination_connection.sender, message.parse().unwrap()).await;
                     }
                 }
                 _ => {
@@ -176,7 +180,7 @@ async fn client_msg(client_id: &str, msg: Message, clients: &ClientMap) {
                         if let Some(connection_info) = &client.client_id {
                             if data.destination.matches_destination(connection_info)
                             {
-                                send_packet(&client.sender, data.clone()).await;
+                                send_deserialized_packet(&client.sender, message.parse().unwrap()).await;
                             }
                         }
                     }
