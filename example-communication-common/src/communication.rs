@@ -50,9 +50,14 @@ impl Display for ConnectionInfo {
 
 #[derive(Serialize, Deserialize, Clone)]
 pub enum ControlTypes {
+    Default,
     Message,
     TransferFile,
     DeleteFile,
+}
+
+impl Default for ControlTypes {
+    fn default() -> Self { ControlTypes::Default }
 }
 
 pub struct ControlOption {
@@ -78,6 +83,7 @@ pub struct ControlDefinition {
 impl ControlTypes {
     pub fn as_str(&self) -> String {
         match self {
+            ControlTypes::Default => {"".to_string()}
             ControlTypes::Message => {"Message".to_string()}
             ControlTypes::TransferFile => {"TransferFile".to_string()}
             ControlTypes::DeleteFile => {"DeleteFile".to_string()}
@@ -85,6 +91,13 @@ impl ControlTypes {
     }
     pub fn to_definition(&self) -> ControlDefinition {
         match self {
+            ControlTypes::Default => {
+                ControlDefinition {
+                    display_name: "".to_string(),
+                    name: "".to_string(),
+                    options: vec![],
+                }
+            }
             ControlTypes::Message => {
                 ControlDefinition {
                     display_name: "Send Message".to_string(),
@@ -172,6 +185,7 @@ pub enum CommandType {
     },
     ProvideCapabilities {
         sender_uuid: String,
+        #[serde_as(deserialize_as = "DefaultOnError")]
         list: Vec<ControlTypes>
     },
     Ack,
