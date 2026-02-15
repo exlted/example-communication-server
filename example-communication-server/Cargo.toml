@@ -9,7 +9,7 @@ warp = { version = "0.4.2", features = ["websocket", "server"] }
 tokio-stream = "0.1.18"
 uuid = { version = "1.19.0", features = ["v4"] }
 futures = "0.3.31"
-example-communication-common = {version = "0.1.4", features = ["server"]}
+example-communication-common = {version = "0.1.5", features = ["server"]}
 serde_json = { version = "1.0.149", features = ["alloc"] }
 log = "0.4.29"
 thiserror = "2.0.18"
