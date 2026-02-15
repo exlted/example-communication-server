@@ -1,3 +1,5 @@
+use serde_with::DefaultOnError;
+use serde_with::serde_as;
 use std::cmp::PartialEq;
 use std::fmt;
 use std::fmt::{Display, Formatter};
@@ -128,6 +130,7 @@ impl ControlTypes {
 
 #[derive(Serialize, Deserialize, Clone)]
 pub enum ControlMessage {
+    Default,
     Message {
         text: String
     },
@@ -137,12 +140,17 @@ pub enum ControlMessage {
     }
 }
 
+impl Default for ControlMessage {
+    fn default() -> Self {ControlMessage::Default}
+}
+
 #[derive(Serialize, Deserialize, Clone)]
 pub struct FileDefinition {
     pub path: String,
     pub file_type: String
 }
 
+#[serde_as]
 #[derive(Serialize, Deserialize, Clone)]
 pub enum CommandType {
     // Server -> Client
@@ -156,6 +164,7 @@ pub enum CommandType {
     Disconnect,
     // Client -> Client
     Control {
+        #[serde_as(deserialize_as = "DefaultOnError")]
         message_type: ControlMessage,
     },
     RequestCapabilities {
